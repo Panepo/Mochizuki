@@ -1,0 +1,88 @@
+{
+  "name": "mochizuki",
+  "version": "1.0.0",
+  "description": "Driver detection",
+  "private": true,
+  "author": "Panepo <panepo@github.io>",
+  "homepage": "https://panepo.github.io/Mochizuki",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Panepo/Mochizuki.git"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom --coverage",
+    "eject": "react-scripts eject",
+    "flow": "flow",
+    "flow-install": "flow-typed install",
+    "lint": "eslint src/**/*.{js,jsx}",
+    "prettier": "prettier --single-quote --no-semi --jsx-bracket-same-line --trailing-comma none --write \"src/**/*.{js,jsx}\"",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "prettier --single-quote --no-semi --jsx-bracket-same-line --trailing-comma none --write \"src/**/*.{js,jsx}\"",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
+    "classnames": "^2.2.6",
+    "connected-react-router": "^6.3.1",
+    "core-js": "^3.0.1",
+    "face-api.js": "^0.19.0",
+    "history": "^4.7.2",
+    "is-empty": "^1.2.0",
+    "localforage": "^1.7.3",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "react-ga": "^2.5.7",
+    "react-helmet": "^5.2.0",
+    "react-number-format": "^4.0.7",
+    "react-redux": "^6.0.1",
+    "react-router": "5.0.0",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "2.1.5",
+    "react-webcam": "^1.1.1",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^5.10.0",
+    "redux-thunk": "^2.3.0",
+    "regenerator-runtime": "^0.13.2",
+    "typeface-roboto": "^0.0.54"
+  },
+  "devDependencies": {
+    "codecov": "^3.3.0",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.12.1",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "flow-bin": "^0.94.0",
+    "flow-typed": "^2.5.1",
+    "gh-pages": "^1.2.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.16.4",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-test-utils": "^0.3.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "prettier"
+    ],
+    "plugins": [
+      "prettier",
+      "flowtype"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
