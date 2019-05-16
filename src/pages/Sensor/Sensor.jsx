@@ -9,7 +9,7 @@ import type { Dispatch, RouterHistory } from '../../models'
 import type { StateSetting } from '../../models/setting.model'
 import { withRouter } from 'react-router-dom'
 import * as faceapi from 'face-api.js'
-import { resizeCanvasAndResults, drawFPS } from '../../helpers/face.helper'
+import { drawFPS } from '../../helpers/face.helper'
 import Layout from '../Layout'
 import { Link } from 'react-router-dom'
 import WebcamCrop from '../../componments/WebcamCrop'
@@ -174,17 +174,17 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       .withFaceLandmarks(true)
 
     if (results) {
-      const resizedResults = resizeCanvasAndResults(image, canvas, results)
-      const boxesWithText = await Promise.all(
-        resizedResults.map(async ({ detection, descriptor }) => {
-          const match = 'FQ'
-          return new faceapi.BoxWithText(detection.box, match)
-        })
-      )
+      faceapi.matchDimensions(canvas, image)
+      const resizedResults = faceapi.resizeResults(results, image)
+      faceapi.draw.drawDetections(canvas, resizedResults)
+      faceapi.draw.drawFaceLandmarks(canvas, resizedResults)
 
-      faceapi.drawDetection(canvas, boxesWithText, {
-        boxColor: 'yellow',
-        textColor: 'lime'
+      resizedResults.map(async ({ landmarks }) => {
+        const leftEye = landmarks.getLeftEye()
+        const rightEye = landmarks.getRightEye()
+
+        console.log(leftEye)
+        console.log(rightEye)
       })
     }
   }
@@ -324,11 +324,7 @@ Sensor.propTypes = {
       width: PropTypes.number,
       height: PropTypes.number
     })
-  }),
-  train: PropTypes.shape({
-    face: PropTypes.arrayOf(PropTypes.string),
-    data: PropTypes.arrayOf(PropTypes.string)
-  }).isRequired
+  })
 }
 
 const mapStateToProps = state => {

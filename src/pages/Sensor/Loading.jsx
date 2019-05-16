@@ -31,7 +31,7 @@ const Loading = (props: Props) => {
   return (
     <Layout
       helmet={true}
-      title={'Sensor | Uzuki'}
+      title={'Sensor | Mochizuki'}
       content={
         <Card className={props.classes.paper}>
           <Typography>Loading...</Typography>
