@@ -9,7 +9,8 @@ import type { Dispatch, RouterHistory } from '../../models'
 import type { StateSetting } from '../../models/setting.model'
 import { withRouter } from 'react-router-dom'
 import * as faceapi from 'face-api.js'
-import { drawFPS } from '../../helpers/face.helper'
+// import { drawFPS } from '../../helpers/face.helper'
+import { calcBlink } from '../../helpers/eye.helper'
 import Layout from '../Layout'
 import { Link } from 'react-router-dom'
 import WebcamCrop from '../../componments/WebcamCrop'
@@ -152,10 +153,18 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       await this.faceRecognize(canvas, image)
       const tend = performance.now()
       const tickProcess = Math.floor(tend - tstart).toString() + ' ms'
-      drawFPS(canvas, tickProcess, 'lime', {
-        x: 10,
-        y: this.props.setting.rect.height * 2 - 10
-      })
+      const anchor = { x: 0, y: this.props.setting.rect.height * 2 }
+      const drawOptions = {
+        anchorPosition: 'TOP_LEFT',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        fontColor: 'yellow'
+      }
+      const drawBox = new faceapi.draw.DrawTextField(
+        tickProcess,
+        anchor,
+        drawOptions
+      )
+      drawBox.draw(canvas)
     }
   }
 
@@ -183,8 +192,22 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
         const leftEye = landmarks.getLeftEye()
         const rightEye = landmarks.getRightEye()
 
-        console.log(leftEye)
-        console.log(rightEye)
+        const text = [
+          'left: ' + calcBlink(leftEye).toString(),
+          'right: ' + calcBlink(rightEye).toString()
+        ]
+        const anchor = { x: 0, y: 0 }
+        const drawOptions = {
+          anchorPosition: 'TOP_LEFT',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          fontColor: 'yellow'
+        }
+        const drawBox = new faceapi.draw.DrawTextField(
+          text,
+          anchor,
+          drawOptions
+        )
+        drawBox.draw(canvas)
       })
     }
   }

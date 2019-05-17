@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardActionArea from '@material-ui/core/CardActionArea'
-import IconButton from '@material-ui/core/IconButton'
+// import IconButton from '@material-ui/core/IconButton'
 import IconSettings from '@material-ui/icons/Settings'
 import IconSensor from '@material-ui/icons/Contacts'
 
@@ -51,13 +51,7 @@ class Home extends React.Component<ProvidedProps & Props> {
               <Card className={this.props.classes.card}>
                 <CardActionArea onClick={this.handleRedirect('setting')}>
                   <CardHeader
-                    avatar={
-                      <IconButton
-                        className={this.props.classes.icon}
-                        color="primary">
-                        <IconSettings />
-                      </IconButton>
-                    }
+                    avatar={<IconSettings color={'primary'} />}
                     title={
                       <Typography gutterBottom variant="h5" component="h2">
                         Setting
@@ -72,13 +66,7 @@ class Home extends React.Component<ProvidedProps & Props> {
               <Card className={this.props.classes.card}>
                 <CardActionArea onClick={this.handleRedirect('sensor')}>
                   <CardHeader
-                    avatar={
-                      <IconButton
-                        className={this.props.classes.icon}
-                        color="primary">
-                        <IconSensor />
-                      </IconButton>
-                    }
+                    avatar={<IconSensor color={'primary'} />}
                     title={
                       <Typography gutterBottom variant="h5" component="h2">
                         Sensor
