@@ -17,5 +17,5 @@ export function calcEAR(landmarks: { x: number, y: number }[]): number {
   )
   const EAR = (eyeHeightA + eyeHeightB) / (eyeWidth * 2)
 
-  return Math.floor(EAR * 100) / 100
+  return Math.floor(EAR * 100)
 }

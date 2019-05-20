@@ -80,7 +80,10 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
     detectThreshold: 50,
     detectSize: 160
   }
-  interval: number = 0
+  interval = 0
+  tick = 0
+  tickProcess = 0
+  tickBlink = 0
 
   componentDidMount = async () => {
     await faceapi.loadTinyFaceDetectorModel('/models')
@@ -104,6 +107,13 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
   // ================================================================================
   handleWebcam = () => {
     if (this.state.isPlaying) {
+      window.clearInterval(this.interval)
+      const canvas = document.getElementById('sensor_webcamcrop_overlay')
+      if (canvas instanceof HTMLCanvasElement) {
+        const context = canvas.getContext('2d')
+        context.clearRect(0, 0, canvas.width, canvas.height)
+      }
+      this.tickBlink = 0
       this.setState({
         isPlaying: false,
         isSensing: false
@@ -117,22 +127,19 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
 
   handleSense = async () => {
     if (this.state.isSensing) {
-      window.clearInterval(this.interval)
+      await window.clearInterval(this.interval)
       const canvas = document.getElementById('sensor_webcamcrop_overlay')
       if (canvas instanceof HTMLCanvasElement) {
-        const ctx = canvas.getContext('2d')
-        ctx.clearRect(
-          0,
-          0,
-          this.props.setting.rect.width * 2,
-          this.props.setting.rect.height * 2
-        )
+        const context = canvas.getContext('2d')
+        context.clearRect(0, 0, canvas.width, canvas.height)
       }
+      this.tickBlink = 0
       this.setState({
         isSensing: false
       })
     } else {
-      this.interval = await window.setInterval(() => this.faceMain(), 1000)
+      this.interval = window.setInterval(async () => await this.faceMain(), 10)
+      this.tickBlink = 0
       this.setState({
         isSensing: true
       })
@@ -149,10 +156,11 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       canvas instanceof HTMLCanvasElement &&
       image instanceof HTMLCanvasElement
     ) {
-      const tstart = performance.now()
       await this.faceRecognize(canvas, image)
       const tend = performance.now()
-      const tickProcess = Math.floor(tend - tstart).toString() + ' ms'
+      this.tickProcess = Math.floor(tend - this.tick)
+      const tickProcess = this.tickProcess.toString() + ' ms'
+      this.tick = tend
       const anchor = { x: 0, y: this.props.setting.rect.height * 2 }
       const drawOptions = {
         anchorPosition: 'TOP_LEFT',
@@ -190,11 +198,14 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
 
       const leftEye = resizedResult.landmarks.getLeftEye()
       const rightEye = resizedResult.landmarks.getRightEye()
-
-      const text = [
-        'left: ' + calcEAR(leftEye).toString(),
-        'right: ' + calcEAR(rightEye).toString()
-      ]
+      const EAR = calcEAR(leftEye) + calcEAR(rightEye)
+      const text = ['EAR: ' + EAR.toString()]
+      if (EAR > 0.6) {
+        this.tickBlink += this.tickProcess
+        text.push('Time:' + this.tickBlink.toString())
+      } else {
+        this.tickBlink = 0
+      }
       const anchor = { x: 0, y: 0 }
       const drawOptions = {
         anchorPosition: 'TOP_LEFT',
@@ -204,6 +215,7 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       const drawBox = new faceapi.draw.DrawTextField(text, anchor, drawOptions)
       drawBox.draw(canvas)
     } else {
+      this.tickBlink = 0
       const context = canvas.getContext('2d')
       context.clearRect(0, 0, canvas.width, canvas.height)
     }
