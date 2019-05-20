@@ -10,7 +10,7 @@ import type { StateSetting } from '../../models/setting.model'
 import { withRouter } from 'react-router-dom'
 import * as faceapi from 'face-api.js'
 // import { drawFPS } from '../../helpers/face.helper'
-import { calcBlink } from '../../helpers/eye.helper'
+import { calcEAR } from '../../helpers/eye.helper'
 import Layout from '../Layout'
 import { Link } from 'react-router-dom'
 import WebcamCrop from '../../componments/WebcamCrop'
@@ -172,8 +172,8 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
     canvas: HTMLCanvasElement,
     image: HTMLCanvasElement
   ) => {
-    const results = await faceapi
-      .detectAllFaces(
+    const result = await faceapi
+      .detectSingleFace(
         image,
         new faceapi.TinyFaceDetectorOptions({
           inputSize: this.state.detectSize,
@@ -182,33 +182,30 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       )
       .withFaceLandmarks(true)
 
-    if (results) {
+    if (result) {
       faceapi.matchDimensions(canvas, image)
-      const resizedResults = faceapi.resizeResults(results, image)
-      faceapi.draw.drawDetections(canvas, resizedResults)
-      faceapi.draw.drawFaceLandmarks(canvas, resizedResults)
+      const resizedResult = faceapi.resizeResults(result, image)
+      faceapi.draw.drawDetections(canvas, resizedResult)
+      faceapi.draw.drawFaceLandmarks(canvas, resizedResult)
 
-      resizedResults.map(async ({ landmarks }) => {
-        const leftEye = landmarks.getLeftEye()
-        const rightEye = landmarks.getRightEye()
+      const leftEye = resizedResult.landmarks.getLeftEye()
+      const rightEye = resizedResult.landmarks.getRightEye()
 
-        const text = [
-          'left: ' + calcBlink(leftEye).toString(),
-          'right: ' + calcBlink(rightEye).toString()
-        ]
-        const anchor = { x: 0, y: 0 }
-        const drawOptions = {
-          anchorPosition: 'TOP_LEFT',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          fontColor: 'yellow'
-        }
-        const drawBox = new faceapi.draw.DrawTextField(
-          text,
-          anchor,
-          drawOptions
-        )
-        drawBox.draw(canvas)
-      })
+      const text = [
+        'left: ' + calcEAR(leftEye).toString(),
+        'right: ' + calcEAR(rightEye).toString()
+      ]
+      const anchor = { x: 0, y: 0 }
+      const drawOptions = {
+        anchorPosition: 'TOP_LEFT',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        fontColor: 'yellow'
+      }
+      const drawBox = new faceapi.draw.DrawTextField(text, anchor, drawOptions)
+      drawBox.draw(canvas)
+    } else {
+      const context = canvas.getContext('2d')
+      context.clearRect(0, 0, canvas.width, canvas.height)
     }
   }
 
