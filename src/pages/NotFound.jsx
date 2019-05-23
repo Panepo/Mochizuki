@@ -28,7 +28,7 @@ const NotFound = (props: Props) => {
   return (
     <Layout
       helmet={true}
-      title={'File Not Found | Mochizuki'}
+      title={'File Not Found'}
       content={
         <Card className={props.classes.card}>
           <CardActionArea>

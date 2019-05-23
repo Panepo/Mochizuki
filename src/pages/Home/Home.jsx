@@ -11,7 +11,6 @@ import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardActionArea from '@material-ui/core/CardActionArea'
-// import IconButton from '@material-ui/core/IconButton'
 import IconSettings from '@material-ui/icons/Settings'
 import IconSensor from '@material-ui/icons/Contacts'
 
@@ -38,7 +37,7 @@ class Home extends React.Component<ProvidedProps & Props> {
     return (
       <Layout
         helmet={true}
-        title={'Home | Mochizuki'}
+        title={'Home'}
         gridNormal={10}
         gridPhone={12}
         content={

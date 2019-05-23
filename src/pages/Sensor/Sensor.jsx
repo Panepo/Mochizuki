@@ -9,8 +9,8 @@ import type { Dispatch, RouterHistory } from '../../models'
 import type { StateSetting } from '../../models/setting.model'
 import { withRouter } from 'react-router-dom'
 import * as faceapi from 'face-api.js'
-// import { drawFPS } from '../../helpers/face.helper'
 import { calcEAR } from '../../helpers/eye.helper'
+import { environment } from '../../environment'
 import Layout from '../Layout'
 import { Link } from 'react-router-dom'
 import WebcamCrop from '../../componments/WebcamCrop'
@@ -66,9 +66,7 @@ type State = {
   isLoading: boolean,
   isPlaying: boolean,
   isSensing: boolean,
-  processTime: number,
-  detectThreshold: number,
-  detectSize: number
+  processTime: number
 }
 
 class Sensor extends React.Component<ProvidedProps & Props, State> {
@@ -76,9 +74,7 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
     isLoading: true,
     isPlaying: false,
     isSensing: false,
-    processTime: 0,
-    detectThreshold: 50,
-    detectSize: 160
+    processTime: 0
   }
   interval = 0
   tick = 0
@@ -86,15 +82,21 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
   tickBlink = 0
 
   componentDidMount = async () => {
-    await faceapi.loadTinyFaceDetectorModel('/models')
-    await faceapi.loadFaceLandmarkTinyModel('/models')
+    const dev = process.env.NODE_ENV === 'development'
+    if (dev) {
+      await faceapi.loadTinyFaceDetectorModel(environment.urlDev + 'models')
+      await faceapi.loadFaceLandmarkTinyModel(environment.urlDev + 'models')
+    } else {
+      await faceapi.loadTinyFaceDetectorModel(environment.urlProd + 'models')
+      await faceapi.loadFaceLandmarkTinyModel(environment.urlProd + 'models')
+    }
     const initial = document.getElementById('initial_black')
     await faceapi
       .detectAllFaces(
         initial,
         new faceapi.TinyFaceDetectorOptions({
-          inputSize: this.state.detectSize,
-          scoreThreshold: this.state.detectThreshold / 100
+          inputSize: environment.tinyInputSize,
+          scoreThreshold: environment.tinyThreshold
         })
       )
       .withFaceLandmarks(true)
@@ -184,8 +186,8 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       .detectSingleFace(
         image,
         new faceapi.TinyFaceDetectorOptions({
-          inputSize: this.state.detectSize,
-          scoreThreshold: this.state.detectThreshold / 100
+          inputSize: environment.tinyInputSize,
+          scoreThreshold: environment.tinyThreshold
         })
       )
       .withFaceLandmarks(true)
@@ -200,9 +202,11 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
       const rightEye = resizedResult.landmarks.getRightEye()
       const EAR = calcEAR(leftEye) + calcEAR(rightEye)
       const text = ['EAR: ' + EAR.toString()]
-      if (EAR > 0.6) {
+      if (EAR < environment.blinkEARThreshold) {
         this.tickBlink += this.tickProcess
         text.push('Time:' + this.tickBlink.toString())
+        if (this.tickBlink > environment.blinkTimeThreshold)
+          text.push('DROWSINESS ALERT!!')
       } else {
         this.tickBlink = 0
       }
@@ -317,7 +321,7 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
     return (
       <Layout
         helmet={true}
-        title={'Sensor | Mochizuki'}
+        title={'Sensor'}
         gridNormal={6}
         gridPhone={10}
         content={

@@ -30,18 +30,6 @@ const styles = (theme: Object) => ({
   }
 })
 
-const routes = () => {
-  return (
-    <Switch>
-      <Route exact={true} path="/" component={Home} />
-      <Route exact={true} path="/home" component={Home} />
-      <Route exact={true} path="/setting" component={Setting} />
-      <Route exact={true} path="/sensor" component={Sensor} />
-      <Route component={NotFound} />
-    </Switch>
-  )
-}
-
 type Props = {
   classes: Object
 }
@@ -52,7 +40,15 @@ const App = (props: Props) => {
       <div className={props.classes.root}>
         <Header />
         <Ribbon />
-        <div className={props.classes.content}>{routes()}</div>
+        <div className={props.classes.content}>
+          <Switch>
+            <Route exact={true} path="/" component={Home} />
+            <Route exact={true} path="/home" component={Home} />
+            <Route exact={true} path="/setting" component={Setting} />
+            <Route exact={true} path="/sensor" component={Sensor} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
         <Footer />
       </div>
     </ConnectedRouter>
