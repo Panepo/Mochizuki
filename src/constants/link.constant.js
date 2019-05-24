@@ -5,7 +5,8 @@ import type { LinkSite } from '../models/misc.model'
 export const linkHeader: LinkSite[] = [
   { text: 'Home', link: '/home' },
   { text: 'Setting', link: '/setting' },
-  { text: 'Sensor', link: '/sensor' }
+  { text: 'Sensor', link: '/sensor' },
+  { text: 'Picture', link: '/picture' }
 ]
 
 export const linkDrawer: LinkSite[] = [

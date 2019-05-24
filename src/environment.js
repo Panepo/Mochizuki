@@ -17,8 +17,8 @@ class EnvironmentValues {
   tinyThreshold = 0.5
 
   // Blink detection options
-  blinkEARThreshold = 0.6
-  blinkTimeThreshold = 1000
+  blinkEARThreshold = 0.4
+  blinkTimeThreshold = 500
 }
 
 // Export as singleton
