@@ -69,11 +69,43 @@ class Picture extends React.Component<ProvidedProps & Props, State> {
   componentDidMount = async () => {
     const dev = process.env.NODE_ENV === 'development'
     if (dev) {
-      await faceapi.loadTinyFaceDetectorModel(environment.urlDev + 'models')
-      await faceapi.loadFaceLandmarkTinyModel(environment.urlDev + 'models')
+      if (environment.useTinyFaceDetector) {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+          environment.urlDev + 'models'
+        )
+      } else {
+        await faceapi.nets.ssdMobilenetv1.loadFromUri(
+          environment.urlDev + 'models'
+        )
+      }
+      if (environment.useTinyLandmark) {
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(
+          environment.urlDev + 'models'
+        )
+      } else {
+        await faceapi.nets.faceLandmark68Net.loadFromUri(
+          environment.urlDev + 'models'
+        )
+      }
     } else {
-      await faceapi.loadTinyFaceDetectorModel(environment.urlProd + 'models')
-      await faceapi.loadFaceLandmarkTinyModel(environment.urlProd + 'models')
+      if (environment.useTinyFaceDetector) {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+          environment.urlProd + 'models'
+        )
+      } else {
+        await faceapi.nets.ssdMobilenetv1.loadFromUri(
+          environment.urlProd + 'models'
+        )
+      }
+      if (environment.useTinyLandmark) {
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(
+          environment.urlProd + 'models'
+        )
+      } else {
+        await faceapi.nets.faceLandmark68Net.loadFromUri(
+          environment.urlProd + 'models'
+        )
+      }
     }
     const initial = document.getElementById('initial_black')
     await faceapi
@@ -84,7 +116,7 @@ class Picture extends React.Component<ProvidedProps & Props, State> {
           scoreThreshold: environment.tinyThreshold
         })
       )
-      .withFaceLandmarks(true)
+      .withFaceLandmarks(environment.useTinyLandmark)
 
     this.setState({ isLoading: false })
   }

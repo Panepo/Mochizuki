@@ -12,6 +12,9 @@ class EnvironmentValues {
     height: 360
   }
 
+  useTinyFaceDetector = true
+  useTinyLandmark = true
+
   // TinyFaceDetector options
   tinyInputSize = 160
   tinyThreshold = 0.5
