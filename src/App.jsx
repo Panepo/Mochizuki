@@ -16,7 +16,7 @@ import NotFound from './pages/NotFound'
 import Home from './pages/Home/Home'
 import Setting from './pages/Setting/Setting'
 import Sensor from './pages/Sensor/Sensor'
-import Picture from './pages/Picture/Picture'
+import Validator from './pages/Validator/Validator'
 
 const styles = (theme: Object) => ({
   root: {
@@ -47,7 +47,7 @@ const App = (props: Props) => {
             <Route exact={true} path="/home" component={Home} />
             <Route exact={true} path="/setting" component={Setting} />
             <Route exact={true} path="/sensor" component={Sensor} />
-            <Route exact={true} path="/picture" component={Picture} />
+            <Route exact={true} path="/validator" component={Validator} />
             <Route component={NotFound} />
           </Switch>
         </div>

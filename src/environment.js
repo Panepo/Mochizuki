@@ -19,6 +19,10 @@ class EnvironmentValues {
   tinyInputSize = 160
   tinyThreshold = 0.5
 
+  // SSD Mobilenet v1 options
+  ssdMinConfidence = 0.5
+  ssdMaxResults = 10
+
   // Blink detection options
   blinkEARThreshold = 0.4
   blinkTimeThreshold = 500

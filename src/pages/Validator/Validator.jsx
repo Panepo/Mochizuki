@@ -17,6 +17,8 @@ import Divider from '@material-ui/core/Divider'
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 import IconAdd from '@material-ui/icons/AddPhotoAlternate'
+import Grid from '@material-ui/core/Grid'
+import ImageGallery from '../../componments/ImageGallery'
 
 import Loading from './Loading'
 
@@ -32,7 +34,8 @@ const styles = (theme: Object) => ({
   },
   webcamContainer: {
     position: 'relative',
-    height: '600px'
+    width: '256px',
+    height: '256px'
   },
   webcam: {
     position: 'absolute',
@@ -44,6 +47,9 @@ const styles = (theme: Object) => ({
     top: '0px',
     left: '0px',
     zIndex: 10
+  },
+  grid: {
+    flexGrow: 1
   }
 })
 
@@ -59,7 +65,7 @@ type State = {
   processTime: number
 }
 
-class Picture extends React.Component<ProvidedProps & Props, State> {
+class Validator extends React.Component<ProvidedProps & Props, State> {
   state = {
     isLoading: true,
     imageFile: [],
@@ -108,16 +114,27 @@ class Picture extends React.Component<ProvidedProps & Props, State> {
       }
     }
     const initial = document.getElementById('initial_black')
-    await faceapi
-      .detectAllFaces(
-        initial,
-        new faceapi.TinyFaceDetectorOptions({
-          inputSize: environment.tinyInputSize,
-          scoreThreshold: environment.tinyThreshold
-        })
-      )
-      .withFaceLandmarks(environment.useTinyLandmark)
-
+    if (environment.useTinyFaceDetector) {
+      await faceapi
+        .detectAllFaces(
+          initial,
+          new faceapi.TinyFaceDetectorOptions({
+            inputSize: environment.tinyInputSize,
+            scoreThreshold: environment.tinyThreshold
+          })
+        )
+        .withFaceLandmarks(environment.useTinyLandmark)
+    } else {
+      await faceapi
+        .detectAllFaces(
+          initial,
+          new faceapi.SsdMobilenetv1Options({
+            minConfidence: environment.ssdMinConfidence,
+            maxResults: environment.ssdMaxResults
+          })
+        )
+        .withFaceLandmarks(environment.useTinyLandmark)
+    }
     this.setState({ isLoading: false })
   }
 
@@ -204,15 +221,28 @@ class Picture extends React.Component<ProvidedProps & Props, State> {
     canvas: HTMLCanvasElement,
     image: HTMLCanvasElement
   ) => {
-    const result = await faceapi
-      .detectSingleFace(
-        image,
-        new faceapi.TinyFaceDetectorOptions({
-          inputSize: environment.tinyInputSize,
-          scoreThreshold: environment.tinyThreshold
-        })
-      )
-      .withFaceLandmarks(true)
+    let result
+    if (environment.useTinyFaceDetector) {
+      result = await faceapi
+        .detectSingleFace(
+          image,
+          new faceapi.TinyFaceDetectorOptions({
+            inputSize: environment.tinyInputSize,
+            scoreThreshold: environment.tinyThreshold
+          })
+        )
+        .withFaceLandmarks(environment.useTinyLandmark)
+    } else {
+      result = await faceapi
+        .detectSingleFace(
+          image,
+          new faceapi.SsdMobilenetv1Options({
+            minConfidence: environment.ssdMinConfidence,
+            maxResults: environment.ssdMaxResults
+          })
+        )
+        .withFaceLandmarks(environment.useTinyLandmark)
+    }
 
     if (result) {
       faceapi.matchDimensions(canvas, image)
@@ -246,35 +276,50 @@ class Picture extends React.Component<ProvidedProps & Props, State> {
     return (
       <Layout
         helmet={true}
-        title={'EAR Calculation for Single Picture'}
+        title={'Validator'}
         gridNormal={8}
         gridPhone={10}
         content={
           <Card className={this.props.classes.card}>
             <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>
-                EAR Calculation for Single Picture
+                Validator
               </Typography>
               <Divider className={this.props.classes.divider} />
-
-              <div className={this.props.classes.webcamContainer}>
-                <img
-                  className={this.props.classes.hidden}
-                  src={this.state.imageFile[0]}
-                  id={'input_image'}
-                  alt="upload"
-                  width="100%"
-                  height="100%"
-                />
-                <canvas
-                  className={this.props.classes.webcam}
-                  id={'input_canvas'}
-                />
-                <canvas
-                  className={this.props.classes.webcamOverlay}
-                  id={'input_canvas_overlay'}
-                />
-              </div>
+              <Grid
+                container={true}
+                className={this.props.classes.grid}
+                justify="center"
+                spacing={16}>
+                <Grid item={true}>
+                  <ImageGallery
+                    imageSrc={this.state.imageFile}
+                    imageWidth={'100%'}
+                    imageHeight={'100%'}
+                    imageText={'upload files'}
+                  />
+                </Grid>
+                <Grid item={true}>
+                  <img
+                    className={this.props.classes.hidden}
+                    src={this.state.imageFile[0]}
+                    id={'input_image'}
+                    alt="upload"
+                    width="100%"
+                    height="100%"
+                  />
+                  <div className={this.props.classes.webcamContainer}>
+                    <canvas
+                      className={this.props.classes.webcam}
+                      id={'input_canvas'}
+                    />
+                    <canvas
+                      className={this.props.classes.webcamOverlay}
+                      id={'input_canvas_overlay'}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
               <Divider className={this.props.classes.divider} />
             </CardContent>
             <CardActions>
@@ -302,8 +347,8 @@ class Picture extends React.Component<ProvidedProps & Props, State> {
   }
 }
 
-Picture.propTypes = {
+Validator.propTypes = {
   classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(Picture)
+export default withStyles(styles)(Validator)
