@@ -2,9 +2,10 @@ class EnvironmentValues {
   title = 'Mochizuki'
 
   urlDev = '/'
-  urlProd = '/'
-
+  urlProd = 'https://panepo.github.io/Mochizuki/'
   GoogleAnalyticsID = 'UA-106126363-3'
+  ColorMenuIcon = '#ff6699'
+  ColorRibbon = 'linear-gradient(165deg, #ff5722 30%, #ffff00, #cddc39)'
 
   // Video options
   videoCanvas = {

@@ -10,7 +10,10 @@ export const linkHeader: LinkSite[] = [
 ]
 
 export const linkDrawer: LinkSite[] = [
-  { text: 'BossSensor', link: 'https://github.com/Hironsan/BossSensor' },
+  {
+    text: 'Eye Blink Detection',
+    link: 'http://vision.fe.uni-lj.si/cvww2016/proceedings/papers/05.pdf'
+  },
   {
     text: 'face-api.js',
     link: 'https://github.com/justadudewhohacks/face-api.js'

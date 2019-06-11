@@ -98,14 +98,9 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
         canvas instanceof HTMLCanvasElement &&
         image instanceof HTMLImageElement
       ) {
-        let scale
-        if (image.naturalWidth < 150) scale = 4
-        else if (image.naturalWidth < 300) scale = 3
-        else if (image.naturalWidth < 600) scale = 2
-        else scale = 1
         image.onload = () => {
-          canvas.width = image.naturalWidth * scale
-          canvas.height = image.naturalHeight * scale
+          canvas.width = image.naturalWidth
+          canvas.height = image.naturalHeight
           const ctx = canvas.getContext('2d')
           ctx.drawImage(
             image,
@@ -115,8 +110,8 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
             image.naturalHeight,
             0,
             0,
-            image.naturalWidth * scale,
-            image.naturalHeight * scale
+            image.naturalWidth,
+            image.naturalHeight
           )
           this.faceMain()
         }
@@ -267,18 +262,16 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
             <Grid item xs={8}>
               <Card className={this.props.classes.card}>
                 <CardContent>
-                  <Grid container={true} justify="center">
-                    <div className={this.props.classes.webcamContainer}>
-                      <canvas
-                        className={this.props.classes.webcam}
-                        id={'input_canvas'}
-                      />
-                      <canvas
-                        className={this.props.classes.webcamOverlay}
-                        id={'input_canvas_overlay'}
-                      />
-                    </div>
-                  </Grid>
+                  <div className={this.props.classes.webcamContainer}>
+                    <canvas
+                      className={this.props.classes.webcam}
+                      id={'input_canvas'}
+                    />
+                    <canvas
+                      className={this.props.classes.webcamOverlay}
+                      id={'input_canvas_overlay'}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </Grid>

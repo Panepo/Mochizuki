@@ -1,7 +1,7 @@
 {
   "name": "mochizuki",
   "version": "1.0.0",
-  "description": "Driver detection",
+  "description": "Drowsiness detection",
   "private": true,
   "author": "Panepo <panepo@github.io>",
   "homepage": "https://panepo.github.io/Mochizuki",
@@ -18,7 +18,9 @@
     "flow-install": "flow-typed install",
     "lint": "eslint src/**/*.{js,jsx}",
     "prettier": "prettier --single-quote --no-semi --jsx-bracket-same-line --trailing-comma none --write \"src/**/*.{js,jsx}\"",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "lint-staged": {
     "src/**/*.{js,jsx}": [
