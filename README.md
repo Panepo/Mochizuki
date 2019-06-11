@@ -1,4 +1,4 @@
-# [Uzuki](https://panepo.github.io/Mochizuki/)
+# [Mochizuki](https://panepo.github.io/Mochizuki/)
 
 [![Build Status][travis-image]][travis-url] [![Style Status][prettier-image]][prettier-url] [![Coverage Status][codecov-image]][codecov-url]
 
@@ -66,11 +66,11 @@ Nothing. Only a webcam and a tensorflow.js supported browser are needed.
 
 1. Clone source code
 ```
-$ git clone https://github.com/Panepo/Uzuki.git
+$ git clone https://github.com/Panepo/Mochizuki.git
 ```
 2. Install dependencies
 ```
-$ cd Uzuki
+$ cd Mochizuki
 $ yarn
 ```
 3. Start development server and visit [http://localhost:3000/](http://localhost:3000/)
