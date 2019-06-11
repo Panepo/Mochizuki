@@ -13,6 +13,7 @@ import CardHeader from '@material-ui/core/CardHeader'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import IconSettings from '@material-ui/icons/Settings'
 import IconSensor from '@material-ui/icons/Contacts'
+import IconAdd from '@material-ui/icons/AddPhotoAlternate'
 
 const styles = (theme: Object) => ({
   card: {
@@ -71,7 +72,20 @@ class Home extends React.Component<ProvidedProps & Props> {
                         Sensor
                       </Typography>
                     }
-                    subheader={'Start the sensor to detect driver.'}
+                    subheader={'Start the sensor to detect drowsiness.'}
+                  />
+                </CardActionArea>
+              </Card>
+              <Card className={this.props.classes.card}>
+                <CardActionArea onClick={this.handleRedirect('validator')}>
+                  <CardHeader
+                    avatar={<IconAdd color={'primary'} />}
+                    title={
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Validator
+                      </Typography>
+                    }
+                    subheader={'Upload an picture to validate the sensor'}
                   />
                 </CardActionArea>
               </Card>

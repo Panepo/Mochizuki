@@ -2,12 +2,12 @@
 
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import * as actionSetting from '../../actions/setting.action'
 import * as actionInfo from '../../actions/info.action'
-import type { Dispatch } from '../../models'
+import type { RootState, Dispatch } from '../../models'
 import type { StateSetting } from '../../models/setting.model'
+import type { StateInfo } from '../../models/info.model'
 import type {
   CanvasRect,
   CanvasRectError,
@@ -71,10 +71,11 @@ type ProvidedProps = {
 }
 
 type Props = {
-  actionsS: Dispatch,
-  actionsI: Dispatch,
   classes: Object,
-  setting: StateSetting
+  setting: StateSetting,
+  infoSet: (input: StateInfo) => {},
+  modifyRect: (input: CanvasRect) => {},
+  modifyVideo: (input: VideoConstraints) => {}
 }
 
 type State = {
@@ -125,9 +126,9 @@ class Setting extends React.Component<ProvidedProps & Props, State> {
   }
 
   handleAccept = () => {
-    this.props.actionsS.modifyRect(this.state.rect)
-    this.props.actionsS.modifyVideo(this.state.video)
-    this.props.actionsI.infoSet({
+    this.props.modifyRect(this.state.rect)
+    this.props.modifyVideo(this.state.video)
+    this.props.infoSet({
       onoff: true,
       variant: 'info',
       message: 'Configuration set'
@@ -159,7 +160,7 @@ class Setting extends React.Component<ProvidedProps & Props, State> {
 
       if (error.isValid) {
         this.setState({ rect: input, rectError: error.errors })
-        this.props.actionsI.infoSet({
+        this.props.infoSet({
           onoff: true,
           variant: 'error',
           message: 'Invalid inputs'
@@ -186,7 +187,7 @@ class Setting extends React.Component<ProvidedProps & Props, State> {
 
       if (error.isValid) {
         this.setState({ video: input, videoError: error.errors })
-        this.props.actionsI.infoSet({
+        this.props.infoSet({
           onoff: true,
           variant: 'error',
           message: 'Invalid inputs'
@@ -372,16 +373,23 @@ Setting.propTypes = {
   })
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: RootState) => {
   return {
     setting: state.setting
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    actionsS: bindActionCreators(actionSetting, dispatch),
-    actionsI: bindActionCreators(actionInfo, dispatch)
+    infoSet: input => {
+      dispatch(actionInfo.infoSet(input))
+    },
+    modifyVideo: input => {
+      dispatch(actionSetting.modifyVideo(input))
+    },
+    modifyRect: input => {
+      dispatch(actionSetting.modifyRect(input))
+    }
   }
 }
 

@@ -10,6 +10,7 @@ import type { StateSetting } from '../../models/setting.model'
 import { withRouter } from 'react-router-dom'
 import * as faceapi from 'face-api.js'
 import { calcEAR } from '../../helpers/eye.helper'
+import { loadModel, modelInitial } from '../../helpers/model.helper'
 import { environment } from '../../environment'
 import Layout from '../Layout'
 import { Link } from 'react-router-dom'
@@ -82,25 +83,8 @@ class Sensor extends React.Component<ProvidedProps & Props, State> {
   tickBlink = 0
 
   componentDidMount = async () => {
-    const dev = process.env.NODE_ENV === 'development'
-    if (dev) {
-      await faceapi.loadTinyFaceDetectorModel(environment.urlDev + 'models')
-      await faceapi.loadFaceLandmarkTinyModel(environment.urlDev + 'models')
-    } else {
-      await faceapi.loadTinyFaceDetectorModel(environment.urlProd + 'models')
-      await faceapi.loadFaceLandmarkTinyModel(environment.urlProd + 'models')
-    }
-    const initial = document.getElementById('initial_black')
-    await faceapi
-      .detectAllFaces(
-        initial,
-        new faceapi.TinyFaceDetectorOptions({
-          inputSize: environment.tinyInputSize,
-          scoreThreshold: environment.tinyThreshold
-        })
-      )
-      .withFaceLandmarks(true)
-
+    await loadModel()
+    await modelInitial('initial_black')
     this.setState({ isLoading: false })
   }
 

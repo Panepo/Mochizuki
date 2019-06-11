@@ -12,6 +12,8 @@ class EnvironmentValues {
     height: 360
   }
 
+  valiOriginal = false
+
   useTinyFaceDetector = true
   useTinyLandmark = true
 

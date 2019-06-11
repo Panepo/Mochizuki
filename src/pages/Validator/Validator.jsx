@@ -4,25 +4,20 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import * as faceapi from 'face-api.js'
 import { calcEAR } from '../../helpers/eye.helper'
+import { loadModel, modelInitial } from '../../helpers/model.helper'
 import { environment } from '../../environment'
 import Layout from '../Layout'
-// import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
-// import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid'
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 import IconAdd from '@material-ui/icons/AddPhotoAlternate'
-import Grid from '@material-ui/core/Grid'
-import ImageGallery from '../../componments/ImageGallery'
-
 import Loading from './Loading'
-
-// const imageSensor = require('../../images/sensor.jpg')
 
 const styles = (theme: Object) => ({
   divider: {
@@ -34,8 +29,8 @@ const styles = (theme: Object) => ({
   },
   webcamContainer: {
     position: 'relative',
-    width: '256px',
-    height: '256px'
+    width: '600px',
+    height: '600px'
   },
   webcam: {
     position: 'absolute',
@@ -73,68 +68,8 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
   }
 
   componentDidMount = async () => {
-    const dev = process.env.NODE_ENV === 'development'
-    if (dev) {
-      if (environment.useTinyFaceDetector) {
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-          environment.urlDev + 'models'
-        )
-      } else {
-        await faceapi.nets.ssdMobilenetv1.loadFromUri(
-          environment.urlDev + 'models'
-        )
-      }
-      if (environment.useTinyLandmark) {
-        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(
-          environment.urlDev + 'models'
-        )
-      } else {
-        await faceapi.nets.faceLandmark68Net.loadFromUri(
-          environment.urlDev + 'models'
-        )
-      }
-    } else {
-      if (environment.useTinyFaceDetector) {
-        await faceapi.nets.tinyFaceDetector.loadFromUri(
-          environment.urlProd + 'models'
-        )
-      } else {
-        await faceapi.nets.ssdMobilenetv1.loadFromUri(
-          environment.urlProd + 'models'
-        )
-      }
-      if (environment.useTinyLandmark) {
-        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(
-          environment.urlProd + 'models'
-        )
-      } else {
-        await faceapi.nets.faceLandmark68Net.loadFromUri(
-          environment.urlProd + 'models'
-        )
-      }
-    }
-    const initial = document.getElementById('initial_black')
-    if (environment.useTinyFaceDetector) {
-      await faceapi
-        .detectAllFaces(
-          initial,
-          new faceapi.TinyFaceDetectorOptions({
-            inputSize: environment.tinyInputSize,
-            scoreThreshold: environment.tinyThreshold
-          })
-        )
-        .withFaceLandmarks(environment.useTinyLandmark)
-    } else {
-      await faceapi
-        .detectAllFaces(
-          initial,
-          new faceapi.SsdMobilenetv1Options({
-            minConfidence: environment.ssdMinConfidence,
-            maxResults: environment.ssdMaxResults
-          })
-        )
-        .withFaceLandmarks(environment.useTinyLandmark)
-    }
+    await loadModel()
+    await modelInitial('initial_black')
     this.setState({ isLoading: false })
   }
 
@@ -163,9 +98,14 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
         canvas instanceof HTMLCanvasElement &&
         image instanceof HTMLImageElement
       ) {
+        let scale
+        if (image.naturalWidth < 150) scale = 4
+        else if (image.naturalWidth < 300) scale = 3
+        else if (image.naturalWidth < 600) scale = 2
+        else scale = 1
         image.onload = () => {
-          canvas.width = image.naturalWidth * 2
-          canvas.height = image.naturalHeight * 2
+          canvas.width = image.naturalWidth * scale
+          canvas.height = image.naturalHeight * scale
           const ctx = canvas.getContext('2d')
           ctx.drawImage(
             image,
@@ -175,8 +115,8 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
             image.naturalHeight,
             0,
             0,
-            image.naturalWidth * 2,
-            image.naturalHeight * 2
+            image.naturalWidth * scale,
+            image.naturalHeight * scale
           )
           this.faceMain()
         }
@@ -280,67 +220,69 @@ class Validator extends React.Component<ProvidedProps & Props, State> {
         gridNormal={8}
         gridPhone={10}
         content={
-          <Card className={this.props.classes.card}>
-            <CardContent>
-              <Typography variant="h5" component="h2" gutterBottom>
-                Validator
-              </Typography>
-              <Divider className={this.props.classes.divider} />
-              <Grid
-                container={true}
-                className={this.props.classes.grid}
-                justify="center"
-                spacing={16}>
-                <Grid item={true}>
-                  <ImageGallery
-                    imageSrc={this.state.imageFile}
-                    imageWidth={'100%'}
-                    imageHeight={'100%'}
-                    imageText={'upload files'}
-                  />
-                </Grid>
-                <Grid item={true}>
-                  <img
-                    className={this.props.classes.hidden}
-                    src={this.state.imageFile[0]}
-                    id={'input_image'}
-                    alt="upload"
-                    width="100%"
-                    height="100%"
-                  />
-                  <div className={this.props.classes.webcamContainer}>
-                    <canvas
-                      className={this.props.classes.webcam}
-                      id={'input_canvas'}
+          <Grid container spacing={16}>
+            <Grid item xs={4}>
+              <Card className={this.props.classes.card}>
+                <CardContent>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    Validator
+                  </Typography>
+                  <Divider className={this.props.classes.divider} />
+                  <Grid container={true} justify="center">
+                    <img
+                      className={
+                        this.state.imageFile.length > 0
+                          ? null
+                          : this.props.classes.hidden
+                      }
+                      src={this.state.imageFile[0]}
+                      id={'input_image'}
+                      alt="upload"
                     />
-                    <canvas
-                      className={this.props.classes.webcamOverlay}
-                      id={'input_canvas_overlay'}
-                    />
-                  </div>
-                </Grid>
-              </Grid>
-              <Divider className={this.props.classes.divider} />
-            </CardContent>
-            <CardActions>
-              <Tooltip title="Select Image">
-                <IconButton
-                  className={this.props.classes.icon}
-                  component="label"
-                  color="primary">
-                  <input
-                    className={this.props.classes.hidden}
-                    type="file"
-                    name="fileUpload"
-                    accept="image/*"
-                    onChange={this.handleUpload}
-                    required
-                  />
-                  <IconAdd />
-                </IconButton>
-              </Tooltip>
-            </CardActions>
-          </Card>
+                  </Grid>
+                  {this.state.imageFile.length > 0 ? (
+                    <Divider className={this.props.classes.divider} />
+                  ) : null}
+                </CardContent>
+                <CardActions>
+                  <Tooltip title="Select Image">
+                    <IconButton
+                      className={this.props.classes.icon}
+                      component="label"
+                      color="primary">
+                      <input
+                        className={this.props.classes.hidden}
+                        type="file"
+                        name="fileUpload"
+                        accept="image/*"
+                        onChange={this.handleUpload}
+                        required
+                      />
+                      <IconAdd />
+                    </IconButton>
+                  </Tooltip>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={8}>
+              <Card className={this.props.classes.card}>
+                <CardContent>
+                  <Grid container={true} justify="center">
+                    <div className={this.props.classes.webcamContainer}>
+                      <canvas
+                        className={this.props.classes.webcam}
+                        id={'input_canvas'}
+                      />
+                      <canvas
+                        className={this.props.classes.webcamOverlay}
+                        id={'input_canvas_overlay'}
+                      />
+                    </div>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         }
       />
     )
