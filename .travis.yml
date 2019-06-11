@@ -1,0 +1,28 @@
+language: node_js
+node_js:
+- 8.11.3
+before_install:
+- export TZ=Asia/Taipei
+install:
+- yarn
+script:
+- git clone --depth 1 --branch gh-pages https://$GH_TOKEN@github.com/Panepo/Mochizuki
+  build
+- yarn test && codecov
+- yarn build
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: "$GH_TOKEN"
+  keep-history: true
+  local-dir: build
+  on:
+    branch: master
+branches:
+  only:
+  - master
+notifications:
+  email: false
+env:
+  global:
+  - secure: MP6VpRLBe+w+Bo++jlsYjqYJShsO2N0EdShgPm/5mP+oq9RcI7hQVohGlWk1+xvm0Lo6i+wiiN2YYsvYN9XZFDGSiF2gNgcK1/qOgavM/T11uPBXit6fZw4cwlpuyTdcSZWABl7jvoilpKOk9SOFqCksm7kXrwTX/dfEcpqWkipl16vmGCu3WNdCDZN+wLiM6u8dWrpaf0kFtIlBXbZ20aVQ4sflBaQ3UfuvFGjT9d5XfkIZaoBAedgC9WY8hSZBxmNBZiJMJs0itvqGIHo7dL+2IBs6YCd838BPW8XFPng+yQ7hFwmXr5qx9K/JGQh9g3FZuuYbxCbZJez4mT/+tjeZe2vVc2J03EOWCnNpToMoTKzRh07EMc3ScAPNZP8rjfxuNwpPARMDKyX5rmBcuefMJ0pPvSJuwN/Tfs4lY8scKHvBt3LT7YxMSL4G6XGwpjZ3WAtUuVeyY4y0/RSVQLjmF8hXYe7JdMEQGQH9NG2UsW+6Gi5zRn4RCUoDqvKmTKpdWhr8zT9gomtCb42YE1eYLaCzouvJSzwlq8RyUA401gSUqfiA8wOadZmL0+iFZRfGgS/JGgDWPDm34Y+/naJ4kHjqmH+dGbmWLeCfl1wYD6In0kEQvfSJTq19mxikwv3mNz/vMoCpKuDlZs1oL+3Mmuc13PqhuC8OzV82ikc=
