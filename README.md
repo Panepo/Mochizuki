@@ -13,7 +13,7 @@
 
 React implementation of drowsiness detection.
 
-![Screenshot](https://github.com/Panepo/Uzuki/blob/master/documents/sceeenshot.png)
+![Screenshot](https://github.com/Panepo/Mochizuki/blob/master/documents/sceeenshot.png)
 
 ## FAQ
 
@@ -39,7 +39,6 @@ Your browser will download a model around ~271KB in size.
 
 * Webcam
 * Browser (Chrome is perfered)
-* Some images of your boss
 
 ## Install
 
