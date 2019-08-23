@@ -40,6 +40,10 @@ self.__precacheManifest = [
     "url": "/Mochizuki/static/media/roboto-latin-300.a1471d1d.woff"
   },
   {
+    "revision": "d69924b98acd849cdeba9fbff3f88ea6",
+    "url": "/Mochizuki/static/media/roboto-latin-300italic.d69924b9.woff2"
+  },
+  {
     "revision": "210a7c781f5a354a0e4985656ab456d9",
     "url": "/Mochizuki/static/media/roboto-latin-300italic.210a7c78.woff"
   },
@@ -50,10 +54,6 @@ self.__precacheManifest = [
   {
     "revision": "bafb105baeb22d965c70fe52ba6b49d9",
     "url": "/Mochizuki/static/media/roboto-latin-400.bafb105b.woff"
-  },
-  {
-    "revision": "d69924b98acd849cdeba9fbff3f88ea6",
-    "url": "/Mochizuki/static/media/roboto-latin-300italic.d69924b9.woff2"
   },
   {
     "revision": "d8bcbe724fd6f4ba44d0ee6a2675890f",
