@@ -78,16 +78,19 @@ def main():
             if process_this_frame:
                 # Find all the faces and face encodings in the current frame of video
                 face_locations = face_recognition.face_locations(rgb_small_frame)
-                face_landmarks = face_recognition.face_landmarks(rgb_small_frame, face_locations)
+                face_landmarks = face_recognition.face_landmarks(
+                    rgb_small_frame, face_locations
+                )
             process_this_frame = not process_this_frame
         else:
             face_locations = face_recognition.face_locations(rgb_small_frame)
-            face_landmarks = face_recognition.face_landmarks(rgb_small_frame, face_locations)
+            face_landmarks = face_recognition.face_landmarks(
+                rgb_small_frame, face_locations
+            )
 
         # Display the results
         drawDetection(frame, face_locations, args.scale)
         drawLandmarks(frame, face_landmarks, args.scale)
-
 
         # Calculate processing time
         label = "Process time: %.2f ms" % ((time.time() - start_time) * 1000)
