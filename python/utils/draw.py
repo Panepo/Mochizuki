@@ -95,3 +95,23 @@ def drawLMPolygon(image, face_landmarks, scaleV):
     for face_landmark in face_landmarks:
         pos = tuple([scaleV * x for x in face_landmark])
         cv.circle(image, pos, landDotSize, landDotColor, -1)
+
+def drawDrowiness(image, face_locations, face_drowiness, scale):
+    for (top, right, bottom, left), drowiness in zip(face_locations, face_drowiness):
+        # Scale back up face locations since the frame we detected in was scaled
+        if scale is not 1:
+            scaleV = math.floor(1 / scale)
+            top *= scaleV
+            right *= scaleV
+            bottom *= scaleV
+            left *= scaleV
+
+        # Draw a box around the face
+        cv.rectangle(image, (left, top), (right, bottom), rectColor, rectWidth)
+
+        string = str( math.floor(drowiness * 1000))
+        # Draw a label with a name below the face
+        cv.rectangle(
+            image, (left, bottom - labelSize), (right, bottom + math.floor(labelSize / 2)), (255, 0, 0), cv.FILLED
+        )
+        cv.putText(image, string, (left, bottom), textFont, textSize, textColor, textWidth)
