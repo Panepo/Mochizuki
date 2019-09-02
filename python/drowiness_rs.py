@@ -41,7 +41,6 @@ def main():
     # Initialize some variables
     face_locations = []
     face_landmarks = []
-    face_drowiness = []
     process_this_frame = True
     flagCapture = False
 
@@ -92,6 +91,7 @@ def main():
                     rgb_small_frame, face_locations
                 )
 
+            face_drowiness = []
             for face_landmark in face_landmarks:
                 earLeft = eyeAspectRatio(face_landmark["left_eye"])
                 earRight = eyeAspectRatio(face_landmark["right_eye"])
