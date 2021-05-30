@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/Mochizuki/precache-manifest.9984666f72cc6ba6c8ca682d6af47137.js"
+  "/Mochizuki/precache-manifest.7f69f8898df582d2042f7ae28b9bf593.js"
 );
 
 workbox.clientsClaim();
